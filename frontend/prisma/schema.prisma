@@ -1,0 +1,69 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model CandidateProfile {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // Personal Information
+  firstName  String
+  middleName String?
+  lastName   String
+
+  // Address Details
+  permanentStreetAddress String
+  permanentCity          String
+  permanentState         String
+  permanentZipCode       String
+  permanentCountry       String
+
+  currentStreetAddress String
+  currentCity          String
+  currentState         String
+  currentZipCode       String
+  currentCountry       String
+
+  // Additional Personal Details
+  dateOfBirth String
+  age         Int
+  gender      String
+
+  // Contact Information
+  passport     String?
+  mobileNumber String
+  panNumber    String?
+  visaNumber   String?
+  emailId      String?
+
+  // Emergency Contact
+  emergencyContactName   String?
+  emergencyContactNumber String?
+
+  // Additional Fields
+  availableForRelocation Boolean @default(false)
+
+  // Education Details (as JSON or embedded document)
+  educationalQualifications Json?
+
+  // Training and Certifications
+  training                   Json?
+  professionalCertifications Json?
+
+  // Family Details
+  familyMembers Json?
+
+  // References
+  references Json?
+
+  // PDF-specific fields
+  originalFileName String
+  extractedText    String
+  extractedAt      DateTime @default(now())
+
+  @@map("candidate_profiles")
+}

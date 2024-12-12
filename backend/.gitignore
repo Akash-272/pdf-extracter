@@ -1,0 +1,11 @@
+.env
+todo.todo
+
+# Virtual environment
+venv/
+myenv/
+env/
+*.venv
+.env
+venv
+myenv
