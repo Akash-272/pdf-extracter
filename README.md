@@ -1,46 +1,48 @@
-# PDF Extracter
+# PDF Extractor
 
-**PDF Extracter** is a Python-based tool for extracting text and other content from PDF files. It simplifies working with PDF documents by providing an easy-to-use interface for processing, extracting, and handling large-scale PDFs efficiently.
+## Project Overview
+
+PDF Extractor is a Python-based application designed to extract and process information from PDF documents, providing a robust solution for data extraction and database storage.
 
 ## Features
 
-- Extracts text from PDF documents.
-- Handles various layouts, including multi-column formats.
-- Lightweight and fast, utilizing Python libraries.
+- Extract structured data from PDF files
+- Save extracted information to a SQLite database
+- Retrieve and display candidate information
+- Support for various data types and formats
+- Error-tolerant extraction mechanism
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed on your system:
+Before you begin, ensure you have the following installed:
 
-- **Python 3.7 or higher**
-- **pip** (Python package manager)
-- Optionally, **Git** for cloning the repository.
-
----
+- Python 3.8 or higher
+- pip (Python package manager)
 
 ## Installation
 
-### Step 1: Clone the Repository
-
-Use the following command to clone the repository:
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Akash-272/pdf-extracter.git
 cd pdf-extracter
+```
 
-### Step 2: Set Up a Virtual Environment (Recommended)
+### 2. Create a Virtual Environment (Recommended)
 
-Create and activate a virtual environment to manage dependencies:
-
-#### On Windows:
 ```bash
+# On Windows
 python -m venv venv
 venv\Scripts\activate
 
-### Step 3: Install Dependencies
+# On macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+```
 
-Install the required packages using `pip`:
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
+```
 
