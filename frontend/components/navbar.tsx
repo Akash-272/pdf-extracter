@@ -12,7 +12,7 @@ const Navbar = () => {
           <Brain className="w-6 h-6 text-purple-600" />
           <span className="text-xl font-semibold">
             <Link href="/">
-              Cipher
+              Totextmode
             </Link>
           </span>
         </div>

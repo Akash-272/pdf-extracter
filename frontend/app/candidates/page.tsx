@@ -1,38 +1,13 @@
 import { Suspense } from "react";
 import { DataTable } from "@/components/data-table";
-import { columns } from "@/components/columns";
-import { db } from "@/lib/prisma";
+import { CandidateProfile, columns } from "@/components/columns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Upload } from "lucide-react";
+import { getCandidates } from "@/actions";
 
-async function getCandidates() {
-  try {
-    const candidates = await db.candidateProfile.findMany({
-      orderBy: {
-        extractedAt: 'desc'
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        emailId: true,
-        mobileNumber: true,
-        currentCity: true,
-        gender: true,
-        dateOfBirth: true,
-        extractedAt: true,
-        availableForRelocation: true,
-      }
-    });
-    return candidates;
-  } catch (error) {
-    console.error('Error fetching candidates:', error);
-    return [];
-  }
-}
+const CandidatesPage = async () => {
 
-export default async function CandidatesPage() {
   const candidates = await getCandidates();
 
   return (
@@ -46,10 +21,12 @@ export default async function CandidatesPage() {
           </Button>
         </Link>
       </div>
-      
+
       <Suspense fallback={<div>Loading...</div>}>
-        <DataTable columns={columns} data={candidates} />
+        <DataTable columns={columns} data={candidates as CandidateProfile[]} />
       </Suspense>
     </div>
   );
-} 
+};
+
+export default CandidatesPage;

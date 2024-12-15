@@ -37,7 +37,7 @@ def extract_text_from_pdf(pdf_path):
         logger.debug(f"Extracting text from {len(images)} pages")
         extracted_text = ""
         for i, image in enumerate(images, 1):
-            logger.debug(f"Processing page {i}")
+            # logger.debug(f"Processing page {i}")
             text = pytesseract.image_to_string(image)
             extracted_text += text + "\n"
             
@@ -49,12 +49,37 @@ def extract_text_from_pdf(pdf_path):
 def parse_form_data(text, original_filename):
     form_data = {}
     
-    # Personal Information - updated patterns
-    name_patterns = {
-        'firstName': r'1\.\s*Name.*?\n\s*([\w\s]+)\s+(?:John\s+John)',
-        'middleName': r'1\.\s*Name.*?\n\s*(?:[\w\s]+)\s+(John)\s+John',
-        'lastName': r'1\.\s*Name.*?\n\s*(?:[\w\s]+\s+[\w\s]+)\s+(John)',
-    }
+    # Personal Information - improved name pattern for the specific format
+    full_name_pattern = r'1\.\s*Name\s*\(Block\s*Letters-\s*As\s*specified\s*on\s*Passport\s*or\s*Pan\s*Card\):\s*([A-Za-z\s]+)'
+    full_name_match = re.search(full_name_pattern, text, re.IGNORECASE)
+    
+    if full_name_match:
+        full_name = full_name_match.group(1).strip()
+        logger.debug(f"Found full name: {full_name}")
+        
+        # Split the full name into parts
+        name_parts = full_name.split()
+        
+        # Based on your PDF format, we know it's "Peter Bruce Wyne"
+        if len(name_parts) >= 3:
+            form_data['firstName'] = name_parts[0]  # Peter
+            form_data['middleName'] = name_parts[1]  # Bruce
+            form_data['lastName'] = ' '.join(name_parts[2:])  # Wyne
+        elif len(name_parts) == 2:
+            form_data['firstName'] = name_parts[0]
+            form_data['lastName'] = name_parts[1]
+            form_data['middleName'] = ''
+        elif len(name_parts) == 1:
+            form_data['firstName'] = name_parts[0]
+            form_data['middleName'] = ''
+            form_data['lastName'] = ''
+            
+        logger.debug(f"Name parts extracted - First: {form_data['firstName']}, Middle: {form_data['middleName']}, Last: {form_data['lastName']}")
+    else:
+        logger.warning("No name found in the text")
+        form_data['firstName'] = ''
+        form_data['middleName'] = ''
+        form_data['lastName'] = ''
     
     # Address Patterns - updated to handle the specific format
     address_patterns = {
@@ -95,12 +120,14 @@ def parse_form_data(text, original_filename):
     
     # Extract fields using patterns
     all_patterns = {
-        **name_patterns,
         **address_patterns,
         **personal_patterns,
         **contact_patterns,
         **emergency_patterns
     }
+    
+    # Log the raw text for debugging
+    logger.debug(f"Raw extracted text for name section: {text[:500]}")
     
     for field, pattern in all_patterns.items():
         match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
@@ -113,7 +140,7 @@ def parse_form_data(text, original_filename):
         else:
             if field == 'age':
                 form_data[field] = 0
-            elif field in ['middleName', 'passport', 'panNumber', 'visaNumber', 'emailId']:
+            elif field in ['passport', 'panNumber', 'visaNumber', 'emailId']:
                 continue
             else:
                 form_data[field] = ""
@@ -211,15 +238,19 @@ def upload_file():
             logger.debug('Starting text extraction from PDF')
             extracted_text = extract_text_from_pdf(temp_path)
             
+            # Add debug logging for extracted text
+            logger.debug("Extracted text from PDF:")
+            logger.debug("=" * 50)
+            logger.debug(extracted_text[:1000])  # First 1000 characters
+            logger.debug("=" * 50)
+            
             # Clean up the temporary file
             os.remove(temp_path)
-            logger.debug('Temporary file removed')
 
             if extracted_text:
-                # Parse the extracted text into structured data
-                logger.debug('Parsing extracted text into structured data')
                 parsed_data = parse_form_data(extracted_text, filename)
                 logger.info('Successfully processed and parsed PDF')
+                logger.debug(f"Parsed name fields: {parsed_data.get('firstName', '')}, {parsed_data.get('middleName', '')}, {parsed_data.get('lastName', '')}")
                 return jsonify({
                     'text': extracted_text,
                     'parsedData': parsed_data

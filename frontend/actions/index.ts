@@ -5,6 +5,13 @@ import { revalidatePath } from 'next/cache'
 
 export async function saveExtractedData(data: any) {
   try {
+    console.log('Data to be saved:', data);
+    console.log('Data to be saved:', {
+      firstName: data.firstName,
+      middleName: data.middleName,
+      lastName: data.lastName
+    });
+    
     const profile = await db.candidateProfile.create({
       data: {
         firstName: data.firstName || '',
@@ -48,4 +55,35 @@ export async function saveExtractedData(data: any) {
     console.error('Error saving data:', error)
     return { success: false, error: 'Failed to save data' }
   }
-}
+};
+
+export async function getCandidates() {
+  try {
+    const candidates = await db.candidateProfile.findMany({
+      orderBy: {
+        extractedAt: 'desc'
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        emailId: true,
+        mobileNumber: true,
+        currentCity: true,
+        gender: true,
+        dateOfBirth: true,
+        extractedAt: true,
+        availableForRelocation: true,
+        passport: true,
+        panNumber: true,
+        emergencyContactName: true,
+        emergencyContactNumber: true,
+      }
+    });
+    
+    return candidates;
+  } catch (error) {
+    console.error('Error fetching candidates:', error);
+    return [];
+  }
+};

@@ -1,14 +1,11 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Brain, Upload, Search, Zap, ArrowRight, FileText, BarChart3, Shield } from "lucide-react";
+import { ArrowRight, BarChart3, Brain, Upload, Zap } from "lucide-react";
 import Link from "next/link";
 
-export default function Home() {
+const Home = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      
 
       <main>
         {/* Hero Section */}
@@ -89,7 +86,7 @@ export default function Home() {
               <div className="flex items-center space-x-2 mb-4">
                 <Brain className="w-6 h-6 text-purple-600" />
                 <span className="font-bold">
-                  Cipher
+                  Totextmode
                 </span>
               </div>
               <p className="text-sm text-gray-600">
@@ -153,4 +150,6 @@ function FooterLinks({ title, links }: { title: string; links: string[] }) {
       </ul>
     </div>
   );
-}
+};
+
+export default Home;
